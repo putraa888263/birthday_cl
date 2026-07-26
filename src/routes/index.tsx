@@ -11,6 +11,40 @@ const SURPRISE_MESSAGE =
   "A little something waits for you — a handwritten letter tucked inside your favorite book. Go find it. 💌";
 const DATE_LINE = "Tonight, 8pm — our spot by the water. Wear the dress I love.";
 
+// Kartu pertanyaan romantis — edit bebas. Setiap kartu punya pertanyaan,
+// pilihan jawaban, dan pesan manis yang muncul setelah dijawab.
+const LOVE_QUESTIONS: {
+  emoji: string;
+  question: string;
+  options: string[];
+  reply: string;
+}[] = [
+  {
+    emoji: "🌙",
+    question: "Kalau bisa mengulang satu momen kita, kamu pilih yang mana?",
+    options: ["Pertama kali ketemu", "Malam hujan itu", "Tertawa sampai nangis"],
+    reply: "Apapun jawabanmu, aku mau mengulanginya seribu kali — asal bersamamu.",
+  },
+  {
+    emoji: "☕",
+    question: "Pagi sempurna versimu terdengar seperti apa?",
+    options: ["Kopi & pelukan", "Jalan pagi berdua", "Tidur sampai siang"],
+    reply: "Baiklah — besok pagi aku wujudkan. Kamu tinggal buka mata saja.",
+  },
+  {
+    emoji: "✨",
+    question: "Satu kata untuk perasaanmu hari ini?",
+    options: ["Bahagia", "Terharu", "Dicintai"],
+    reply: "Itu juga yang aku rasakan setiap kali melihatmu.",
+  },
+  {
+    emoji: "💌",
+    question: "Pesan singkat apa yang paling ingin kamu dengar sekarang?",
+    options: ["Aku sayang kamu", "Kamu segalanya", "Terima kasih sudah ada"],
+    reply: "Ketiganya benar. Selalu benar. Setiap hari.",
+  },
+];
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -212,6 +246,26 @@ function Index() {
           <div className="mt-12 text-right">
             <p className="font-script text-2xl text-accent">Forever yours,</p>
             <p className="mt-1 font-serif text-2xl italic text-foreground">{SENDER_NAME}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Kartu pertanyaan romantis */}
+      <section className="relative px-6 py-16">
+        <div className="mx-auto max-w-5xl">
+          <div className="text-center">
+            <p className="font-script text-2xl text-accent">sedikit pertanyaan untukmu…</p>
+            <h2 className="mt-2 font-serif text-4xl text-foreground md:text-5xl">
+              Sentuh setiap kartu
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-muted-foreground">
+              Jawab sesukamu — tak ada jawaban salah, hanya alasan untuk tersenyum.
+            </p>
+          </div>
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            {LOVE_QUESTIONS.map((q, i) => (
+              <LoveCard key={i} data={q} />
+            ))}
           </div>
         </div>
       </section>
