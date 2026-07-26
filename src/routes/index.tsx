@@ -11,6 +11,31 @@ const SURPRISE_MESSAGE =
   "A little something waits for you — a handwritten letter tucked inside your favorite book. Go find it. 💌";
 const DATE_LINE = "Tonight, 8pm — our spot by the water. Wear the dress I love.";
 
+// Foto kenangan — ganti `src` dengan URL foto kamu (bisa unggah ke chat lalu
+// tempel URL-nya di sini, atau simpan di src/assets/ dan import).
+const MEMORY_PHOTOS: { src: string; caption: string; date: string }[] = [
+  {
+    src: "https://images.unsplash.com/photo-1519741497674-611481863552?w=800&q=80",
+    caption: "Pertama kali kita",
+    date: "Musim semi",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=800&q=80",
+    caption: "Sore terbaik itu",
+    date: "Juni",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1529636798458-92182e662485?w=800&q=80",
+    caption: "Tertawa sampai lupa waktu",
+    date: "Agustus",
+  },
+  {
+    src: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=800&q=80",
+    caption: "Jalan pulang bersamamu",
+    date: "Oktober",
+  },
+];
+
 // Kartu pertanyaan romantis — edit bebas. Setiap kartu punya pertanyaan,
 // pilihan jawaban, dan pesan manis yang muncul setelah dijawab.
 const LOVE_QUESTIONS: {
@@ -106,10 +131,13 @@ function DateProposal() {
 
 function LoveCard({
   data,
+  answer,
+  onAnswer,
 }: {
   data: { emoji: string; question: string; options: string[]; reply: string };
+  answer: string | null;
+  onAnswer: (a: string | null) => void;
 }) {
-  const [answer, setAnswer] = useState<string | null>(null);
   return (
     <div className="group relative overflow-hidden rounded-3xl border border-accent/40 bg-card p-8 shadow-lg transition hover:-translate-y-1 hover:shadow-xl">
       <div className="absolute -right-6 -top-6 text-7xl opacity-10 transition group-hover:scale-110 group-hover:opacity-20">
@@ -123,7 +151,7 @@ function LoveCard({
             {data.options.map((opt) => (
               <button
                 key={opt}
-                onClick={() => setAnswer(opt)}
+                onClick={() => onAnswer(opt)}
                 className="rounded-full border border-accent/50 bg-background px-4 py-2 font-serif text-sm text-foreground/80 transition hover:border-primary hover:bg-primary hover:text-primary-foreground"
               >
                 {opt}
@@ -135,7 +163,7 @@ function LoveCard({
             <p className="font-script text-lg text-primary">"{answer}"</p>
             <p className="mt-2 font-serif text-base italic text-foreground/80">{data.reply}</p>
             <button
-              onClick={() => setAnswer(null)}
+              onClick={() => onAnswer(null)}
               className="mt-3 font-script text-sm text-accent underline underline-offset-4 hover:text-primary"
             >
               ganti jawaban
@@ -143,6 +171,51 @@ function LoveCard({
           </div>
         )}
       </div>
+    </div>
+  );
+}
+
+function MemoryGallery() {
+  return (
+    <div className="mt-16 animate-fade-in">
+      <div className="text-center">
+        <p className="font-script text-2xl text-accent">hadiah kecil karena kamu menjawab semuanya…</p>
+        <h3 className="mt-2 font-serif text-4xl text-foreground md:text-5xl">
+          Kenangan kita
+        </h3>
+        <p className="mx-auto mt-3 max-w-md text-muted-foreground">
+          Setiap bingkai, satu alasan aku bersyukur. Ketuk untuk melihat lebih dekat.
+        </p>
+      </div>
+      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {MEMORY_PHOTOS.map((p, i) => (
+          <figure
+            key={i}
+            className="group relative overflow-hidden rounded-3xl border border-accent/40 bg-card shadow-lg transition hover:-translate-y-2 hover:shadow-2xl"
+            style={{
+              transform: `rotate(${i % 2 === 0 ? -1.5 : 1.5}deg)`,
+            }}
+          >
+            <div className="aspect-[4/5] overflow-hidden bg-secondary">
+              <img
+                src={p.src}
+                alt={p.caption}
+                loading="lazy"
+                className="h-full w-full object-cover transition duration-700 group-hover:scale-110"
+              />
+            </div>
+            <figcaption className="p-4 text-center">
+              <p className="font-script text-xl text-primary">{p.caption}</p>
+              <p className="mt-1 font-serif text-xs uppercase tracking-widest text-muted-foreground">
+                {p.date}
+              </p>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+      <p className="mt-8 text-center font-script text-lg text-accent">
+        …dan masih banyak lagi yang menunggu untuk dibuat.
+      </p>
     </div>
   );
 }
@@ -227,6 +300,10 @@ function _DateProposal() {
 
 function Index() {
   const [revealed, setRevealed] = useState(false);
+  const [answers, setAnswers] = useState<(string | null)[]>(
+    () => LOVE_QUESTIONS.map(() => null),
+  );
+  const allAnswered = answers.every((a) => a !== null);
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -311,9 +388,17 @@ function Index() {
           </div>
           <div className="mt-12 grid gap-6 md:grid-cols-2">
             {LOVE_QUESTIONS.map((q, i) => (
-              <LoveCard key={i} data={q} />
+              <LoveCard
+                key={i}
+                data={q}
+                answer={answers[i]}
+                onAnswer={(a) =>
+                  setAnswers((prev) => prev.map((v, idx) => (idx === i ? a : v)))
+                }
+              />
             ))}
           </div>
+          {allAnswered && <MemoryGallery />}
         </div>
       </section>
 
