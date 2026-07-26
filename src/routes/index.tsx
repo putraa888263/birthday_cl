@@ -11,6 +11,40 @@ const SURPRISE_MESSAGE =
   "A little something waits for you — a handwritten letter tucked inside your favorite book. Go find it. 💌";
 const DATE_LINE = "Tonight, 8pm — our spot by the water. Wear the dress I love.";
 
+// Kartu pertanyaan romantis — edit bebas. Setiap kartu punya pertanyaan,
+// pilihan jawaban, dan pesan manis yang muncul setelah dijawab.
+const LOVE_QUESTIONS: {
+  emoji: string;
+  question: string;
+  options: string[];
+  reply: string;
+}[] = [
+  {
+    emoji: "🌙",
+    question: "Kalau bisa mengulang satu momen kita, kamu pilih yang mana?",
+    options: ["Pertama kali ketemu", "Malam hujan itu", "Tertawa sampai nangis"],
+    reply: "Apapun jawabanmu, aku mau mengulanginya seribu kali — asal bersamamu.",
+  },
+  {
+    emoji: "☕",
+    question: "Pagi sempurna versimu terdengar seperti apa?",
+    options: ["Kopi & pelukan", "Jalan pagi berdua", "Tidur sampai siang"],
+    reply: "Baiklah — besok pagi aku wujudkan. Kamu tinggal buka mata saja.",
+  },
+  {
+    emoji: "✨",
+    question: "Satu kata untuk perasaanmu hari ini?",
+    options: ["Bahagia", "Terharu", "Dicintai"],
+    reply: "Itu juga yang aku rasakan setiap kali melihatmu.",
+  },
+  {
+    emoji: "💌",
+    question: "Pesan singkat apa yang paling ingin kamu dengar sekarang?",
+    options: ["Aku sayang kamu", "Kamu segalanya", "Terima kasih sudah ada"],
+    reply: "Ketiganya benar. Selalu benar. Setiap hari.",
+  },
+];
+
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -67,6 +101,53 @@ function FloatingHearts({ count = 18 }: { count?: number }) {
 }
 
 function DateProposal() {
+  return _DateProposal();
+}
+
+function LoveCard({
+  data,
+}: {
+  data: { emoji: string; question: string; options: string[]; reply: string };
+}) {
+  const [answer, setAnswer] = useState<string | null>(null);
+  return (
+    <div className="group relative overflow-hidden rounded-3xl border border-accent/40 bg-card p-8 shadow-lg transition hover:-translate-y-1 hover:shadow-xl">
+      <div className="absolute -right-6 -top-6 text-7xl opacity-10 transition group-hover:scale-110 group-hover:opacity-20">
+        {data.emoji}
+      </div>
+      <div className="relative">
+        <span className="text-3xl">{data.emoji}</span>
+        <h3 className="mt-3 font-serif text-2xl text-foreground">{data.question}</h3>
+        {!answer ? (
+          <div className="mt-6 flex flex-wrap gap-2">
+            {data.options.map((opt) => (
+              <button
+                key={opt}
+                onClick={() => setAnswer(opt)}
+                className="rounded-full border border-accent/50 bg-background px-4 py-2 font-serif text-sm text-foreground/80 transition hover:border-primary hover:bg-primary hover:text-primary-foreground"
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="mt-6 animate-fade-in rounded-2xl bg-secondary/50 p-4">
+            <p className="font-script text-lg text-primary">"{answer}"</p>
+            <p className="mt-2 font-serif text-base italic text-foreground/80">{data.reply}</p>
+            <button
+              onClick={() => setAnswer(null)}
+              className="mt-3 font-script text-sm text-accent underline underline-offset-4 hover:text-primary"
+            >
+              ganti jawaban
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function _DateProposal() {
   const [accepted, setAccepted] = useState(false);
   const [evasions, setEvasions] = useState(0);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -212,6 +293,26 @@ function Index() {
           <div className="mt-12 text-right">
             <p className="font-script text-2xl text-accent">Forever yours,</p>
             <p className="mt-1 font-serif text-2xl italic text-foreground">{SENDER_NAME}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Kartu pertanyaan romantis */}
+      <section className="relative px-6 py-16">
+        <div className="mx-auto max-w-5xl">
+          <div className="text-center">
+            <p className="font-script text-2xl text-accent">sedikit pertanyaan untukmu…</p>
+            <h2 className="mt-2 font-serif text-4xl text-foreground md:text-5xl">
+              Sentuh setiap kartu
+            </h2>
+            <p className="mx-auto mt-3 max-w-md text-muted-foreground">
+              Jawab sesukamu — tak ada jawaban salah, hanya alasan untuk tersenyum.
+            </p>
+          </div>
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            {LOVE_QUESTIONS.map((q, i) => (
+              <LoveCard key={i} data={q} />
+            ))}
           </div>
         </div>
       </section>
