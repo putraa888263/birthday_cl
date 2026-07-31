@@ -289,7 +289,7 @@ function MusicToggleButton({ backsoundRef }: { backsoundRef: React.RefObject<HTM
   );
 }
 
-function SecretMessageCard() {
+function SecretMessageCard({ backsoundRef }: { backsoundRef: React.RefObject<HTMLAudioElement> }) {
   const [isRevealed, setIsRevealed] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [evasions, setEvasions] = useState(0);
@@ -316,6 +316,7 @@ function SecretMessageCard() {
     if (isPlaying) {
       audio.pause();
     } else {
+      backsoundRef.current?.pause();
       audio.play();
     }
     setIsPlaying(!isPlaying);
@@ -511,7 +512,7 @@ function Index() {
         <ScrollRevealWrapper>
           <section className="px-6 pb-32">
             <div className="mx-auto max-w-3xl">
-              <SecretMessageCard />
+              <SecretMessageCard backsoundRef={backsoundRef} />
             </div>
           </section>
         </ScrollRevealWrapper>
