@@ -4,8 +4,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Preloader } from "@/components/preloader";
 import silkBg from "@/assets/silk-bg.jpg";
 import heartImg from "@/assets/heart.png";
-import backsound from "@/assets/suara/backsound.mp3";
-import pesanSuara from "@/assets/suara/pesan.mp3";
 
 const RECIPIENT_NAME = "Vernita Nasya Kalista";
 const SENDER_NAME = "Aryaaa";
@@ -305,7 +303,7 @@ function SecretMessageCard() {
           <motion.div key="player" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
             <p className="font-script text-2xl text-accent">Listen closely...</p>
             <div className="mt-6 flex flex-col items-center gap-4">
-              <audio ref={voiceRef} src={pesanSuara} />
+              <audio ref={voiceRef} src="/pesan.mp3" />
               <motion.button
                 whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                 onClick={togglePlay}
@@ -383,7 +381,7 @@ function Index() {
   return (
     <>
       <AnimatePresence>{loading && <Preloader />}</AnimatePresence>
-      <audio ref={backsoundRef} src={backsound} loop />
+      <audio ref={backsoundRef} src="/backsound.mp3" loop />
       <motion.main
         initial={{ opacity: 0 }}
         animate={{ opacity: loading ? 0 : 1 }}
