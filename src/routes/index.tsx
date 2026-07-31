@@ -257,6 +257,38 @@ function MemoryGallery() {
   );
 }
 
+function MusicToggleButton({ backsoundRef }: { backsoundRef: React.RefObject<HTMLAudioElement> }) {
+  const [isMusicPlaying, setIsMusicPlaying] = useState(false);
+
+  const toggleMusic = () => {
+    const audio = backsoundRef.current;
+    if (!audio) return;
+    if (isMusicPlaying) {
+      audio.pause();
+    } else {
+      audio.volume = 0.2;
+      audio.play();
+    }
+    setIsMusicPlaying(!isMusicPlaying);
+  };
+
+  return (
+    <motion.button
+      onClick={toggleMusic}
+      className="fixed top-4 right-4 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-card/50 text-foreground backdrop-blur-sm border border-border"
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      aria-label="Toggle background music"
+    >
+      {isMusicPlaying ? (
+        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9 4.804A7.968 7.968 0 001 11c0 4.411 3.589 8 8 8s8-3.589 8-8c0-2.033-.76-3.89-2.01-5.355" /><path d="M9 9V4" /><path d="M12 12l-3-3" /></svg>
+      ) : (
+        <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9 4.804A7.968 7.968 0 001 11c0 4.411 3.589 8 8 8s8-3.589 8-8c0-2.033-.76-3.89-2.01-5.355" /><path d="M9 9V4" /><path d="M12 12l-3-3" /></svg>
+      )}
+    </motion.button>
+  );
+}
+
 function SecretMessageCard() {
   const [isRevealed, setIsRevealed] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -357,23 +389,6 @@ function Index() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const audio = backsoundRef.current;
-    if (audio) {
-      audio.volume = 0.2;
-      const promise = audio.play();
-      if (promise !== undefined) {
-        promise.catch(() => {
-          const playOnFirstInteraction = () => {
-            audio.play();
-            document.removeEventListener("click", playOnFirstInteraction);
-          };
-          document.addEventListener("click", playOnFirstInteraction);
-        });
-      }
-    }
-  }, []);
-
-  useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 3300); // Match preloader animation
     return () => clearTimeout(timer);
   }, []);
@@ -381,6 +396,7 @@ function Index() {
   return (
     <>
       <AnimatePresence>{loading && <Preloader />}</AnimatePresence>
+      <MusicToggleButton backsoundRef={backsoundRef} />
       <audio ref={backsoundRef} src="/backsound.mp3" loop />
       <motion.main
         initial={{ opacity: 0 }}
