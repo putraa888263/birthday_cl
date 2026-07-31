@@ -313,6 +313,7 @@ function SecretMessageCard({ backsoundRef }: { backsoundRef: React.RefObject<HTM
   const togglePlay = () => {
     const audio = voiceRef.current;
     if (!audio) return;
+
     if (isPlaying) {
       audio.pause();
     } else {
@@ -326,17 +327,21 @@ function SecretMessageCard({ backsoundRef }: { backsoundRef: React.RefObject<HTM
     const audio = voiceRef.current;
     const onEnded = () => setIsPlaying(false);
     audio?.addEventListener('ended', onEnded);
-    return () => audio?.removeEventListener('ended', onEnded);
+    return () => {
+      audio?.removeEventListener('ended', onEnded);
+    };
   }, []);
 
   return (
     <div ref={containerRef} className="relative min-h-[300px] overflow-hidden rounded-3xl border border-accent/40 bg-card p-12 text-center shadow-xl">
+      {/* Audio element is always in the DOM for reliability */}
+      <audio ref={voiceRef} src="/pesan.mp3" preload="auto" />
+      
       <AnimatePresence mode="wait">
         {isRevealed ? (
           <motion.div key="player" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
             <p className="font-script text-2xl text-accent">Listen closely...</p>
             <div className="mt-6 flex flex-col items-center gap-4">
-              <audio ref={voiceRef} src="/pesan.mp3" />
               <motion.button
                 whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
                 onClick={togglePlay}
@@ -349,7 +354,7 @@ function SecretMessageCard({ backsoundRef }: { backsoundRef: React.RefObject<HTM
                   <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 20 20"><path d="M4 4l12 6-12 6V4z"/></svg>
                 )}
               </motion.button>
-              <p className="font-serif text-foreground">A secret message</p>
+              <p className="font-serif text-foreground">Play my secret message</p>
             </div>
           </motion.div>
         ) : (
